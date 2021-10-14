@@ -5,8 +5,9 @@
 	`">
 		<div :class="`
 		header
-			bg-gray-100 relative z-1
+			relative z-1
 			flex p-2 py-1 md:p-4 md:py-2 cursor-pointer transition-all
+			${headerClass ? headerClass : ''}
 			${show ? 'active' : ''}
 		`" @click="toggle">
 			<div class="flex md:flex-col">
@@ -21,15 +22,16 @@
 				flex items-center justify-center
 				w-5 outline-none
 			">
-				<i class="fa fa-chevron-down"></i>
+				<f-icon :icon="icon"></f-icon>
 			</button>
 		</div>
 
-		<div class="
+		<div :class="`
 		expansion-content
-			bg-gray-100 mx-3 relative z-0 shadow
+			mx-3 relative z-0 shadow
 			overflow-hidden h-0 px-3 md:px-6 text-gray-700
-		">
+			${contentClass ? contentClass : ''}
+		`">
 			<slot></slot>
 		</div>
 	</div>
@@ -38,12 +40,19 @@
 
 <script>
 import gsap from 'gsap'
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 
 export default {
+	props: ['header-class', 'content-class'],
+	
 	data: () => ({
 		show: false,
 		duration: 0.2,
 	}),
+
+	computed: {
+		icon: () => (faChevronDown),
+	},
 
 	methods: {
 		toggle(e) {
@@ -107,10 +116,8 @@ export default {
 	box-shadow: 0 2px 3px #1115;
 }
 .header .actions button {
-	@apply flex
-				text-xs md:text-sm text-gray-700
-				outline-none md:mx-1 md:px-1 rounded
-			hover:bg-gray-400 hover:bg-opacity-30 transition-all;
+	@apply shadow-md rounded transition-all outline-none
+				mx-2 px-2 text-sm;
 }
 .header .actions i {
 	@apply text-xs md:text-sm;

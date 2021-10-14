@@ -28,18 +28,18 @@
 
 
 <script>
-import { mapGetters } from 'vuex'
 export default {
 	props: ['show', 'width', 'height', 'persistent', 'content-class'],
-	
+	model: {
+		prop: 'show',
+		event: 'toggle',
+	},
+
 	computed: {
-		...mapGetters([
-			'sidebar'
-		]),
 		dialogStyle() {
-			let sidebar = location.pathname.search('teacher') === 1 ? this.$store.getters['teacher/sidebar'] : this.sidebar
 			return `
-				--left: ${sidebar ? -250 : 0 }px;
+				--left: -250px;
+				--left: 0px;
 			`
 		},
 		getWidth() {
@@ -71,8 +71,8 @@ export default {
 	},
 
 	methods: {
-		close() {
-			if (this.persistent!==undefined && this.show) {
+		close(skip) {
+			if (!skip && this.persistent!==undefined && this.show) {
 				document.querySelector('.dialog .content').classList.add('shake')
 				setTimeout(() => {
 					document.querySelector('.dialog .content').classList.remove('shake')
@@ -80,8 +80,8 @@ export default {
 				return
 			}
 
-			this.$emit('close')
-		},
+			this.$emit('toggle', false)
+		}
 	},
 
 	mounted() {

@@ -1,11 +1,11 @@
 <template>
 	<div :class="`
 		my-chip
-			flex justify-between text-sm ${this.closeBtn ? 'pl-2' : 'px-2'}
+			flex justify-between text-sm py-0.5 ${this.closeBtn ? 'pl-2' : 'px-2'}
 		${computedClass}
 	`">
 		<p>{{ evaluatedText }}</p>
-		<span class="px-1" v-if="closeBtn">&times;</span>
+		<span class="closebtn" v-if="closeBtn" @click="hide($event)">&times;</span>
 	</div>
 </template>
 
@@ -22,9 +22,23 @@ export default {
 		computedClass() {
 			return `
 				${typeof this.rounded !== 'undefined' ? 'rounded' : ''}
-				${typeof this.dark !== 'undefined' ? 'bg-gray-800 text-gray-100' : 'bg-gray-100 text-gray-700'}
+				${typeof this.dark !== 'undefined' ? 'bg-gray-800 text-gray-100' : 'bg-gray-200 text-gray-700'}
 			`
+		},
+	},
+
+	methods: {
+		hide(e) {
+			e;
+			// e.target.parentElement.style.display = 'none'
 		},
 	},
 }
 </script>
+
+
+<style scoped>
+.closebtn {
+	@apply px-1 cursor-pointer;
+}
+</style>

@@ -10,7 +10,7 @@
 			:disabled="!canScrollLeft"
 			@click="scrollLeft"
 			v-show="scrollable">
-				<i class="fa fa-angle-double-left"></i>
+				<f-icon :icon="left"></f-icon>
 			</button>
 		</transition>
 
@@ -34,7 +34,7 @@
 			:disabled="!canScrollRight"
 			@click="scrollRight"
 			v-show="scrollable">
-				<i class="fa fa-angle-double-right"></i>
+				<f-icon :icon="right"></f-icon>
 			</button>
 		</transition>
 	</div>
@@ -42,6 +42,9 @@
 
 
 <script>
+import { faAngleDoubleLeft } from '@fortawesome/free-solid-svg-icons'
+import { faAngleDoubleRight } from '@fortawesome/free-solid-svg-icons'
+
 export default {
 	props: ['model', 'items', 'height'],
 	model: {
@@ -62,6 +65,11 @@ export default {
 		offset: 50,
 	}),
 
+	computed: {
+		left: () => (faAngleDoubleLeft),
+		right: () => (faAngleDoubleRight),
+	},
+
 	mounted() {
 		try {
 			this.checkScrollable()
@@ -69,16 +77,18 @@ export default {
 	},
 
 	created() {
-		this.selected = this.model
+		this.selected = 0
+		this.$emit('update', 0)
 	},
 
 	methods: {
 		checkScrollable() { this.scrollable = this.$el.children[1].scrollWidth > this.$el.children[1].clientWidth },
 		changeActive(el, index) {
-			el.target.scrollIntoView({
-				behavior: 'smooth',
-				inline: 'center'
-			})
+			if (this.scrollable)
+				el.target.scrollIntoView({
+					behavior: 'smooth',
+					inline: 'center'
+				})
 			this.selected = index
 			this.$emit('update', index)
 		},

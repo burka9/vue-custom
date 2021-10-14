@@ -3,36 +3,39 @@
 	my-input
 		relative mb-4
 	">
-		<input
-			:class="`material ${placeholderColor} ${bgColor} ${textColor} transition-all`"
-			:type="type"
-			:min="min ? min : 'auto'"
-			:max="min ? max : 'auto'"
-			:placeholder="placeholder"
-			:disabled="disable"
-			@keyup="checkValidity"
-			@blur="checkValidity"
-			v-model="data"
-			v-if="input"
-		/>
+		<div class="input flex relative" v-if="input">
+			<p :class="`text-gray-600 absolute left-1 z-0 ${textColor}`" v-if="hasPlaceholder">{{ placeholder }}</p>
+			<input
+				:class="`${bgColor} ${textColor} pl-1 z-10`"
+				:type="type"
+				:min="min ? min : 'auto'"
+				:max="min ? max : 'auto'"
+				:disabled="disable"
+				@keyup="checkValidity"
+				@blur="checkValidity"
+				v-model="data"
+			/>
+		</div>
 
-		<select
-			:class="`material w-full ${bgColor} transition-all`"
-			:disabled="disable"
-			@blur="checkValidity"
-			v-model="data"
-			v-else-if="select">
-				<option disabled hidden value="">{{ placeholder }}</option>
-				<option
-				v-for="(opt, i) in opts" :key="i"
-				:value="opt.value">{{ opt.name }}</option>
-				<slot></slot>
-		</select>
+		<div class="select flex relative h-full" v-else>
+			<p :class="`text-gray-600 absolute left-1 z-0 ${textColor}`" v-if="hasPlaceholder">{{ placeholder }}</p>
+			<select
+				:class="`${bgColor} z-10 pl-1 h-full`"
+				:disabled="disable"
+				@change="checkValidity"
+				@blur="checkValidity"
+				v-model="data">
+					<option
+					v-for="(opt, i) in opts" :key="i"
+					:value="opt.value">{{ opt.name }}</option>
+					<slot></slot>
+			</select>
+		</div>
 
 		<transition appear name="message">
 			<p :class="`
 			message
-				absolute text-xs ${textColor}
+				absolute left-1 text-xs ${textColor}
 			`"
 			v-if="this.validity!==null">{{ message }}</p>
 		</transition>
@@ -42,6 +45,8 @@
 
 
 <script>
+import gsap from 'gsap'
+
 export default {
 	props: ['type', 'min', 'max', 'error', 'options', 'placeholder', 'rules', 'required', 'formName', 'disabled'],
 	model: {
@@ -58,7 +63,7 @@ export default {
 	}),
 
 	created() {
-		this.data = this.$attrs.model
+		this.data = this.$attrs.model ? this.$attrs.model : ''
 		this.selector = this.placeholder ? this.placeholder : `A${parseInt(Math.random()*100000)}`
 		if (this.formName)
 			this.formName[this.selector] = null
@@ -70,11 +75,13 @@ export default {
 	},
 
 	computed: {
+		hasPlaceholder() { return typeof this.placeholder !== 'undefined' },
 		input() { return typeof this.type !== 'undefined' },
 		select() { return typeof this.options !== 'undefined' },
 		opts() { return this.options ? this.options : [] },
 		hasError() { return typeof this.error === 'string' && this.error !== '' },
 		message() {
+			// eslint-disable-next-line vue/no-side-effects-in-computed-properties
 			this.validity = this.hasError ? this.error : this.validity
 			if (!this.hasError) this.checkValidity()
 			return this.validity===null ? '' : typeof this.validity === 'boolean' && !this.hasError ? 'Looks Good!' : this.validity
@@ -103,7 +110,25 @@ export default {
 		validityCondition(a, b, c) {
 			return this.validity===null ? a : typeof this.validity === 'boolean' ? b : c
 		},
-		checkValidity() {
+		checkValidity(e) {
+			// check placeholder font-size
+			if (e)
+				if (e.target.parentElement.children.length > 1) {
+					if (this.data === '')
+						gsap.to(e.target.parentElement.children[0], {
+							fontSize: '1rem',
+							top: 0,
+							duration: .15
+						})
+					else
+						gsap.to(e.target.parentElement.children[0], {
+							fontSize: '.75rem',
+							top: -14,
+							duration: .15
+						})
+				}
+			
+			
 			let hasRules = false
 			let pass = false
 
@@ -137,11 +162,14 @@ export default {
 
 <style scoped>
 input {
-	@apply w-full;
+	@apply bg-transparent border-0 border-b
+				w-full transition-all outline-none;
 }
 select {
-	@apply h-full sm:w-10/12;
+	@apply bg-transparent border-0 border-b
+				w-full h-full transition-all outline-none;
 }
+
 .message-enter,
 .message-leave-to {
 	transform: rotateX(-90deg);

@@ -16,8 +16,6 @@
 
 
 <script>
-import { isNumber } from '@/assets/script/app.js'
-
 export default {
 	props: ['text', 'hide', 'timeout', 'top', 'right', 'bottom', 'left', 'center', 'width', 'content-class'],
 	model: {
@@ -29,7 +27,7 @@ export default {
 	}),
 
 	created() {
-		if (isNumber(this.timeout)) {
+		if (!isNaN(this.timeout)) {
 			setTimeout(() => this.close(), parseInt(this.timeout))
 		}
 	},
@@ -37,7 +35,7 @@ export default {
 	computed: {
 		show() { return this.hide },
 		getWidth() {
-			return isNumber(this.width) ? this.width : 200
+			return !isNaN(this.width) ? this.width : 200
 		},
 		myClass() {
 			return `popup
@@ -80,7 +78,7 @@ export default {
 
 	watch: {
 		show() {
-			if (isNumber(this.timeout) && this.show) {
+			if (!isNaN(this.timeout) && this.show) {
 				setTimeout(() => this.close(), parseInt(this.timeout))
 			}
 		}

@@ -1,0 +1,27 @@
+::-webkit-scrollbar {
+	width: 2px;
+	height: 2px;
+	background: black;
+}
+
+button.material {
+	@apply shadow-md rounded transition-all outline-none
+				p-1 px-2
+				text-sm
+				
+				md:shadow-2xl
+				md:text-base
+				md:p-0.5 md:px-2;
+}
+button.material.plain {
+	@apply bg-transparent hover:bg-gray-300 hover:bg-opacity-40;
+}
+button.material.dark {
+	@apply text-white text-opacity-90 hover:text-opacity-100;
+}
+
+button.material.xs {
+	@apply shadow-md rounded transition-all outline-none
+				p-0.5 px-2
+				text-sm;
+}

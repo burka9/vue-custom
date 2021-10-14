@@ -21,7 +21,7 @@
 
 <script>
 export default {
-	props: ['label'],
+	props: ['show', 'label'],
 	model: {
 		prop: 'show',
 		event: 'toggle'
@@ -30,6 +30,10 @@ export default {
 	data: () => ({
 		data: false
 	}),
+
+	created() {
+		this.data = this.show
+	},
 
 	methods: {
 		change() { this.$emit('toggle', this.data) },
